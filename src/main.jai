@@ -104,10 +104,7 @@ main :: () {
     defer freecam_deinit();
     defer capture_deinit();
     defer zork_deinit();
-    if !tray_init(overlay.window) {
-        show_error("Unable to create the system tray icon.");
-        return;
-    }
+    tray_ready := tray_init(overlay.window);
     defer tray_deinit();
 
     timer_started := Win.timeBeginPeriod(1) == 0;
@@ -132,6 +129,7 @@ main :: () {
     if config_error.count console_write(*console, config_error, .ERROR);
     else if shortcut_error.count console_write(*console, shortcut_error, .ERROR);
     else console_startup_presentation(*console);
+    if !tray_ready console_write(*console, "System tray icon unavailable; retrying while the console runs.", .ERROR);
     if reload_error.count console_config_message(*console, reload_error, .ERROR);
     draw_console();
     Win.SwapBuffers(render_dc);

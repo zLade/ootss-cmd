@@ -21,6 +21,9 @@ backend_init :: (info: *Window_Info) {
 
         #if OS == .WINDOWS {
             hglrc, hdc, chosen_msaa := wgl_create_context(info.window, null, MINIMUM_GL_MAJOR_VERSION, MINIMUM_GL_MINOR_VERSION, wanted_msaa=info.wanted_msaa);
+            // Some WGL loaders restore the previous context before returning.
+            // Simp needs this context current before loading OpenGL procedures.
+            if hglrc && hdc && wglGetCurrentContext() != hglrc wglMakeCurrent(hdc, hglrc);
             the_gl_context = hglrc;
             the_hdc_for_pixel_format_cloning = hdc;
             info.msaa = chosen_msaa;

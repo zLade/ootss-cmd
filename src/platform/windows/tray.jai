@@ -19,6 +19,7 @@ tray_init :: (window: Win.HWND) -> bool {
     tray.window = window;
     tray.icon   = cast(Win.HICON) LoadImageW(Win.GetModuleHandleW(null), cast(*u16) APP_ICON_RESOURCE_ID,
         IMAGE_ICON, Win.GetSystemMetrics(Win.SM_CXSMICON), Win.GetSystemMetrics(Win.SM_CYSMICON), LR_SHARED);
+    if !tray.icon tray.icon = Win.LoadIconW(null, cast(*u16) 32512); // IDI_APPLICATION
     if !tray.icon return false;
     tray.taskbar_created = RegisterWindowMessageW(utf8_to_wide("TaskbarCreated",, temp));
     return tray_register();
